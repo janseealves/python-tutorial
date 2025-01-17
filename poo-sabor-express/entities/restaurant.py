@@ -1,4 +1,5 @@
 from entities.review import Review
+from entities.menu.menu_item import MenuItem
 
 class Restaurant: 
     restaurants = []
@@ -8,7 +9,8 @@ class Restaurant:
         self._name = name.title() #self = this (Java)
         self._category = category.upper()
         self._isActive = False # O _ protege o atributo de modificações diretas
-        self.__reviews = []
+        self._reviews = []
+        self._menu = []
         Restaurant.restaurants.append(self) #Após criar o objeto Restaurant, o mesmo é add na lista de restaurants.
 
     # = toString() (Java) 
@@ -33,16 +35,32 @@ class Restaurant:
     def setReview(self, client, rating):
         review = Review(client, rating)
         if(0 <= review._rating <= 5):
-            self.__reviews.append(review)
+            self._reviews.append(review)
         else:
             return 'Error: Nota inválida!' 
 
     @property
     def avgReview(self):
-        if not self.__reviews:
+        if not self._reviews:
             return '-'
 
-        sumRating = sum(review._rating for review in self.__reviews)
-        average = round(sumRating / len(self.__reviews), 1)
+        sumRating = sum(review._rating for review in self._reviews)
+        average = round(sumRating / len(self._reviews), 1)
 
         return average
+
+    def addOnMenu(self, item):
+        if isinstance(item, MenuItem): # isistance(Objeto, Classe) Retorna True quando o item comparado for uma instância ou derivado da classe comparada.
+            self._menu.append(item)
+    @property
+    def showMenu(self):
+        print(f'Cardápio do restaurante {self._name}: \n')
+        for i, item in enumerate(self._menu, start=1):
+            if hasattr(item, '_discription'): # hasattr(Objeto, Atributo) Returna True quando o item argumento tem o atributo com o nome especificado.
+                print(f'{i}. Nome: {item._name.ljust(20)} | Preço: ${str(item._price).ljust(20)} | Descrição: {item._discription}')
+
+            if hasattr(item, '_size'):
+                print(f'{i}. Nome: {item._name.ljust(20)} | Preço: ${str(item._price).ljust(20)} | Tamanho: {item._size}')
+
+
+            
